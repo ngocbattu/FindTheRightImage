@@ -1,4 +1,4 @@
-package com.example.findtherightimage.Model
+package com.example.findtherightimage.model
 
 class SlideShowPhoto(
     val imageSlide : Int

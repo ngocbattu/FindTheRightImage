@@ -1,4 +1,4 @@
-package com.example.findtherightimage.Adapter
+package com.example.findtherightimage.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.viewpager.widget.PagerAdapter
 import com.bumptech.glide.Glide
-import com.example.findtherightimage.Model.SlideShowPhoto
+import com.example.findtherightimage.model.SlideShowPhoto
 import com.example.findtherightimage.R
 
 class ViewPageSlidePhoto(

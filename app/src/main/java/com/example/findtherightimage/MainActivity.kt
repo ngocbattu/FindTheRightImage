@@ -1,19 +1,21 @@
 package com.example.findtherightimage
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
-import com.android.billingclient.api.*
-import com.example.findtherightimage.Adapter.ViewPageSlidePhoto
-import com.example.findtherightimage.Model.SlideShowPhoto
+import com.example.findtherightimage.adapter.ProductAdapter
+import com.example.findtherightimage.adapter.ViewPageSlidePhoto
+import com.example.findtherightimage.model.ProductList
+import com.example.findtherightimage.model.SlideShowPhoto
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -23,6 +25,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var image_cart : ImageView
     lateinit var viewPageSlidePhoto: ViewPageSlidePhoto
     var listslideShowPhoto: MutableList<SlideShowPhoto> = mutableListOf()
+    var listProduct : MutableList<ProductList> = mutableListOf()
+    lateinit var rcyListProduct : RecyclerView
+    lateinit var productAdapter : ProductAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,46 +44,12 @@ class MainActivity : AppCompatActivity() {
         viewPager.adapter = ViewPageSlidePhoto(this,listslideShowPhoto)
         AotuSlideImage()
 
-        val skulist  = ArrayList<String>()
-        skulist.add("android.test.purchased")
-
-         val purchasesUpdatedListener =
-            PurchasesUpdatedListener { billingResult, purchases ->
-                // To be implemented in a later section.
-            }
-
-         val billingClient = BillingClient.newBuilder(this)
-            .setListener(purchasesUpdatedListener)
-            .enablePendingPurchases()
-            .build()
         image_cart.setOnClickListener(View.OnClickListener {
 
-            billingClient.startConnection(object : BillingClientStateListener {
-                override fun onBillingSetupFinished(billingResult: BillingResult) {
-                    if (billingResult.responseCode ==  BillingClient.BillingResponseCode.OK) {
-                    val params = SkuDetailsParams.newBuilder()
-                        params.setSkusList(skulist).setType(BillingClient.SkuType.INAPP)
-
-                        billingClient.querySkuDetailsAsync(params.build()){
-                            billingResult ,
-                                skuDetailsList ->
-                            for (skuDetails in skuDetailsList!!){
-                                val flow = BillingFlowParams.newBuilder().setSkuDetails(skuDetails).build()
-
-                                val responseCode = billingClient.launchBillingFlow(this@MainActivity,flow).responseCode
-                            }
-                        }
-                    }
-                }
-                override fun onBillingServiceDisconnected() {
-                    // Try to restart the connection on the next request to
-                    // Google Play by calling the startConnection() method.
-                }
-            })
-            Log.d("TAG", "onCreate:  aaaa" )
         })
 
-
+        insertListProduct()
+        getListProductRecyView()
 
 
     }
@@ -104,6 +76,31 @@ class MainActivity : AppCompatActivity() {
             }
         }, 6000, 6000)
     }
+
+    fun insertListProduct(){
+        listProduct.add(ProductList(0,R.drawable.cat1,"Mèo bông cute",100000))
+        listProduct.add(ProductList(1,R.drawable.cat2,"Mèo bông" , 200000))
+        listProduct.add(ProductList(2,R.drawable.cat3,"Mèo bông" , 50000))
+        listProduct.add(ProductList(3,R.drawable.dog1,"Chó bông" , 200000))
+        listProduct.add(ProductList(4,R.drawable.gau6,"gấu bông" , 200000))
+        listProduct.add(ProductList(5,R.drawable.gau7,"gấu bông" , 200000))
+        listProduct.add(ProductList(6,R.drawable.gau8,"gấu bông" , 200000))
+    }
+
+    fun getListProductRecyView(){
+        rcyListProduct = findViewById(R.id.rcyListProduct)
+        rcyListProduct.layoutManager = GridLayoutManager(this,2)
+        productAdapter = ProductAdapter(this,listProduct){productList: ProductList,position ->
+            val intent = Intent(this@MainActivity,ProductDetails::class.java)
+            intent.putExtra("_id",productList.idProduct)
+            intent.putExtra("_imageProduct",productList.imageAnhProduct)
+            intent.putExtra("_nameProduct",productList.nameProduct)
+            intent.putExtra("_priceProduct",productList.priceProduct)
+            startActivity(intent)
+        }
+        rcyListProduct.adapter = productAdapter
+    }
+
 
 
 
