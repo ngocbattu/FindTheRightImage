@@ -17,6 +17,9 @@
         android:theme="@style/Theme.FindTheRightImage"
         tools:targetApi="31">
         <activity
+            android:name=".ProductPackagePriceActivity"
+            android:exported="false" />
+        <activity
             android:name=".ProductDetails"
             android:exported="false" />
         <activity
